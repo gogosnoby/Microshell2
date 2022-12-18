@@ -24,6 +24,40 @@ void help()
     printf("\n\n");
 }
 
+void cd(char **arg, char *path)
+{
+    if(arg[1]==NULL)
+    {
+        char *login=getlogin();
+        chdir("/home");
+        chdir(login);
+    }
+    else if(strcmp(arg[1],"-")==0)
+    {
+        chdir(path);
+    }
+    else if(strcmp(arg[1],"..")==0)
+    {
+        char tempcwd[BUFFER_SIZE];
+        getcwd(tempcwd, sizeof(tempcwd));
+        char *temppwd1=" ", *temppwd2=" ", *temppwd3;
+        temppwd3=strtok(tempcwd,"/");
+        chdir("/home");
+        while(temppwd3!=NULL)
+        {
+            temppwd1=temppwd2;
+            temppwd2=temppwd3;
+            temppwd3=strtok(NULL,"/");
+            chdir(temppwd1);
+        }
+    }
+    else
+    {
+        chdir(arg[1]);
+    }
+
+}
+
 void argument(char *command, char **arg)
 {
     char korektor[]=" \n";
@@ -42,22 +76,28 @@ int main()
 {
     char uinput[BUFFER_SIZE];
     char cwd[BUFFER_SIZE];
+    char curcd[3][100];
+    getcwd(cwd, sizeof(cwd));
+    strcpy(curcd[1],cwd);
     char *arg[100];
     char *command;
     while(true)
     {
         char *login=getlogin();
         getcwd(cwd, sizeof(cwd));
-
         printf(KGRN "%s:" RESET, login);
         printf(KBLU "[%s]" RESET, cwd);
         printf("$ ");
-
         command=fgets(uinput, sizeof(uinput), stdin);
         uinput[strlen(uinput)-1]='\0';
         argument(command, arg);
 
-        if(strcmp(arg[0],"help")==0)
+        if (strlen(uinput)==0)
+        {
+            continue;
+        }
+
+        else if(strcmp(arg[0],"help")==0)
         {
             if(arg[1]==NULL)
                 help();
@@ -73,6 +113,12 @@ int main()
                 printf("Wrong argument for command %s\n", arg[0]);
         }
 
+        else if(strcmp(arg[0],"cd")==0)
+        {
+            strcpy(curcd[0],cwd);
+            cd(arg,curcd[1]);
+            strcpy(curcd[1],curcd[0]);
+        }
 
     }
     return 0;
