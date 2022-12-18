@@ -6,3 +6,10 @@
 	<unistd.h>
 	<string.h>
 
+1671379194 source:/home/osboxes/Documents/GitHub/Microshell2/main.c
+	<stdio.h>
+	<stdlib.h>
+	<stdbool.h>
+	<unistd.h>
+	<string.h>
+
