@@ -21,7 +21,7 @@ void help()
 {
     printf(KRED "\n===Microshell===\n\n" RESET);
     printf(KRED "Autor: Oskar Winiarski\n\n" RESET);
-    printf(KRED "Obslugiwane komendy: \n-help\n-exit" RESET);
+    printf(KRED "Obslugiwane wlasne implementacje komend: \n-help\n-exit" RESET);
     printf("\n\n");
 }
 
