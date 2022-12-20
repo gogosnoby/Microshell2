@@ -6,10 +6,11 @@
 	<unistd.h>
 	<string.h>
 
-1671384030 source:/home/osboxes/Documents/GitHub/Microshell2/main.c
+1671553960 source:/home/osboxes/Documents/GitHub/Microshell2/main.c
 	<stdio.h>
 	<stdlib.h>
 	<stdbool.h>
 	<unistd.h>
 	<string.h>
+	<sys/wait.h>
 

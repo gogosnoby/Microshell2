@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include <unistd.h>
 #include <string.h>
+#include <sys/wait.h>
 
 #define KNRM  "\x1B[0m"
 #define KRED  "\x1B[31m"
@@ -118,6 +119,23 @@ int main()
             strcpy(curcd[0],cwd);
             cd(arg,curcd[1]);
             strcpy(curcd[1],curcd[0]);
+        }
+
+        else
+        {
+            if(fork()==0)
+            {
+                exit(execvp(arg[0],arg));
+            }
+            else
+            {
+                int a=0;
+                wait(&a);
+                if(a!=0)
+                {
+                    printf("error code: %d\n",a);
+                }
+            }
         }
 
     }
