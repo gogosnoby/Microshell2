@@ -27,11 +27,10 @@ void help()
 
 void cd(char **arg, char *path)
 {
+    char *homedir = getenv("HOME");
     if(arg[1]==NULL)
     {
-        char *login=getlogin();
-        chdir("/home");
-        chdir(login);
+        chdir(homedir);
     }
     else if(strcmp(arg[1],"-")==0)
     {
@@ -43,7 +42,38 @@ void cd(char **arg, char *path)
         getcwd(tempcwd, sizeof(tempcwd));
         char *temppwd1=" ", *temppwd2=" ", *temppwd3;
         temppwd3=strtok(tempcwd,"/");
-        chdir("/home");
+        chdir(homedir);
+        while(temppwd3!=NULL)
+        {
+            temppwd1=temppwd2;
+            temppwd2=temppwd3;
+            temppwd3=strtok(NULL,"/");
+            chdir(temppwd1);
+        }
+    }
+    else
+    {
+        chdir(arg[1]);
+    }
+
+}void cd(char **arg, char *path)
+{
+    char *homedir = getenv("HOME");
+    if(arg[1]==NULL)
+    {
+        chdir(homedir);
+    }
+    else if(strcmp(arg[1],"-")==0)
+    {
+        chdir(path);
+    }
+    else if(strcmp(arg[1],"..")==0)
+    {
+        char tempcwd[BUFFER_SIZE];
+        getcwd(tempcwd, sizeof(tempcwd));
+        char *temppwd1=" ", *temppwd2=" ", *temppwd3;
+        temppwd3=strtok(tempcwd,"/");
+        chdir(homedir);
         while(temppwd3!=NULL)
         {
             temppwd1=temppwd2;
@@ -58,7 +88,6 @@ void cd(char **arg, char *path)
     }
 
 }
-
 void argument(char *command, char **arg)
 {
     char korektor[]=" \n";
