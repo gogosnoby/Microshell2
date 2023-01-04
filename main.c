@@ -84,7 +84,10 @@ void cd(char **arg, char *path)
     }
     else
     {
-        chdir(arg[1]);
+        if(chdir(arg[1])==0)
+            chdir(arg[1]);
+        else
+            printf("No such directory.\n");
     }
 
 }
