@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <sys/wait.h>
+#include <fcntl.h>
 
 #define KNRM  "\x1B[0m"
 #define KRED  "\x1B[31m"
@@ -21,42 +22,11 @@ void help()
 {
     printf(KRED "\n===Microshell===\n\n" RESET);
     printf(KRED "Autor: Oskar Winiarski\n\n" RESET);
-    printf(KRED "Obslugiwane wlasne implementacje komend: \n-help\n-exit" RESET);
+    printf(KRED "Obslugiwane wlasne implementacje komend: \n-help\n-exit\n-touch" RESET);
     printf("\n\n");
 }
 
 void cd(char **arg, char *path)
-{
-    char *homedir = getenv("HOME");
-    if(arg[1]==NULL)
-    {
-        chdir(homedir);
-    }
-    else if(strcmp(arg[1],"-")==0)
-    {
-        chdir(path);
-    }
-    else if(strcmp(arg[1],"..")==0)
-    {
-        char tempcwd[BUFFER_SIZE];
-        getcwd(tempcwd, sizeof(tempcwd));
-        char *temppwd1=" ", *temppwd2=" ", *temppwd3;
-        temppwd3=strtok(tempcwd,"/");
-        chdir(homedir);
-        while(temppwd3!=NULL)
-        {
-            temppwd1=temppwd2;
-            temppwd2=temppwd3;
-            temppwd3=strtok(NULL,"/");
-            chdir(temppwd1);
-        }
-    }
-    else
-    {
-        chdir(arg[1]);
-    }
-
-}void cd(char **arg, char *path)
 {
     char *homedir = getenv("HOME");
     if(arg[1]==NULL)
@@ -91,6 +61,19 @@ void cd(char **arg, char *path)
     }
 
 }
+
+void touch(char **arg)
+{
+    if(open(arg[1],O_RDONLY)!=-1)
+    {
+        printf("File already exists.\n");
+    }
+    else
+    {
+        open(arg[1],O_WRONLY|O_CREAT|O_TRUNC,S_IRWXU);
+    }
+}
+
 void argument(char *command, char **arg)
 {
     char korektor[]=" \n";
@@ -151,6 +134,11 @@ int main()
             strcpy(curcd[0],cwd);
             cd(arg,curcd[1]);
             strcpy(curcd[1],curcd[0]);
+        }
+
+        else if(strcmp(arg[0],"touch")==0)
+        {
+            touch(arg);
         }
 
         else
