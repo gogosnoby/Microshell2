@@ -22,11 +22,11 @@ void help()
 {
     printf(KRED "\n===Microshell===\n\n" RESET);
     printf(KRED "Autor: Oskar Winiarski\n\n" RESET);
-    printf(KRED "Obslugiwane wlasne implementacje komend: \n-help\n-exit\n-touch" RESET);
+    printf(KRED "Obslugiwane wlasne implementacje komend: \n-help\n-exit\n-touch\n-cd\n-cp" RESET);
     printf("\n\n");
 }
 
-void cd(char **arg, char *path)
+void cd(char **arg, char *cwd)
 {
     char *homedir = getenv("HOME");
     if(arg[1]==NULL)
@@ -35,7 +35,7 @@ void cd(char **arg, char *path)
     }
     else if(strcmp(arg[1],"-")==0)
     {
-        chdir(path);
+        chdir(cwd);
     }
     else if(strcmp(arg[1],"..")==0)
     {
@@ -62,15 +62,51 @@ void cd(char **arg, char *path)
 
 }
 
+void cp(char **arg)
+{
+    int plik1=open(arg[1],O_RDONLY);
+    char buff[BUFFER_SIZE];
+    int l;
+    if(plik1==-1)
+    {
+        printf("Missing source file.\n");
+        return;
+    }
+    if(open(arg[2],O_RDONLY)!=-1)
+    {
+        int plik2=open(arg[2],O_WRONLY);
+        while((l=read(plik1,buff,sizeof buff))>0)
+        {
+            write(plik2,buff,l);
+        }
+    }
+    else if(open(arg[2],O_RDONLY)==-1)
+    {
+        open(arg[2],O_WRONLY|O_CREAT|O_TRUNC,0666);
+        int plik2=open(arg[2],O_WRONLY);
+        while((l=read(plik1,buff,sizeof buff))>0)
+        {
+            write(plik2,buff,l);
+        }
+
+    }
+
+}
+
 void touch(char **arg)
 {
+    if(arg[1]==NULL)
+    {
+        printf("Missing filename.\n");
+        return;
+    }
     if(open(arg[1],O_RDONLY)!=-1)
     {
         printf("File already exists.\n");
     }
     else
     {
-        open(arg[1],O_WRONLY|O_CREAT|O_TRUNC,S_IRWXU);
+        open(arg[1],O_WRONLY|O_CREAT|O_TRUNC,0666);
     }
 }
 
@@ -92,9 +128,8 @@ int main()
 {
     char uinput[BUFFER_SIZE];
     char cwd[BUFFER_SIZE];
-    char curcd[3][100];
-    getcwd(cwd, sizeof(cwd));
-    strcpy(curcd[1],cwd);
+    char curcd[2][BUFFER_SIZE];
+    getcwd(curcd[1], sizeof(curcd[1]));
     char *arg[100];
     char *command;
     while(true)
@@ -139,6 +174,11 @@ int main()
         else if(strcmp(arg[0],"touch")==0)
         {
             touch(arg);
+        }
+
+        else if(strcmp(arg[0],"cp")==0)
+        {
+            cp(arg);
         }
 
         else
