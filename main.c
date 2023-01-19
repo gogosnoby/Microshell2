@@ -29,7 +29,7 @@ void help()
 void cd(char **arg, char *cwd)
 {
     char *homedir = getenv("HOME");
-    if(arg[1]==NULL)
+    if(arg[1]==NULL || arg[1]=="~")
     {
         chdir(homedir);
     }
