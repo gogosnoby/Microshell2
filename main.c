@@ -29,7 +29,7 @@ void help()
 void cd(char **arg, char *cwd)
 {
     char *homedir = getenv("HOME");
-    if(arg[1]==NULL || arg[1]=="~")
+    if(arg[1]==NULL || strcmp(arg[1],"~")==0)
     {
         chdir(homedir);
     }
@@ -112,7 +112,7 @@ void touch(char **arg)
 
 void argument(char *command, char **arg)
 {
-    char korektor[]=" \n";
+    char korektor[]=" \n\t";
     char *com=strtok(command,korektor);
     int i=0;
     while(com!=NULL)
