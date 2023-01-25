@@ -116,7 +116,6 @@ void touch(char **arg)
     }
 }
 
-
 void argument(char *command, char **arg)
 {
     char korektor[]=" \n\t";
@@ -200,6 +199,7 @@ int main()
                 wait(&a);
                 if(a!=0)
                 {
+                    printf("Unknown command.\n");
                     printf("error code: %d\n",a);
                 }
             }
