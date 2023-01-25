@@ -1,3 +1,4 @@
+#define _POSIX_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -5,6 +6,7 @@
 #include <string.h>
 #include <sys/wait.h>
 #include <fcntl.h>
+#include <signal.h>
 
 #define KNRM  "\x1B[0m"
 #define KRED  "\x1B[31m"
@@ -22,7 +24,8 @@ void help()
 {
     printf(KRED "\n===Microshell===\n\n" RESET);
     printf(KRED "Autor: Oskar Winiarski\n\n" RESET);
-    printf(KRED "Obslugiwane wlasne implementacje komend: \n-help\n-exit\n-touch\n-cd\n-cp" RESET);
+    printf(KRED "Obslugiwane wlasne implementacje komend: \n-help\n-exit\n-touch\n-cd\n-cp\n\n" RESET);
+    printf(KRED "Obslugiwane sygnaly: \n-Ctrl+c" RESET);
     printf("\n\n");
 }
 
@@ -132,6 +135,7 @@ void argument(char *command, char **arg)
 
 int main()
 {
+    signal(SIGINT,SIG_IGN);
     char uinput[BUFFER_SIZE];
     char cwd[BUFFER_SIZE];
     char curcd[2][BUFFER_SIZE];
@@ -189,9 +193,18 @@ int main()
 
         else
         {
-            if(fork()==0)
+            if (fork() == 0)
             {
-                exit(execvp(arg[0],arg));
+                if(execvp(arg[0],arg)!=0)
+                {
+                    printf("Unknown command.\n");
+                    exit(0);
+                }
+                else
+                {
+                    raise(SIGINT);
+                }
+
             }
             else
             {
@@ -199,7 +212,6 @@ int main()
                 wait(&a);
                 if(a!=0)
                 {
-                    printf("Unknown command.\n");
                     printf("error code: %d\n",a);
                 }
             }
