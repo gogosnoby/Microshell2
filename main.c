@@ -103,12 +103,19 @@ void touch(char **arg)
     if(open(arg[1],O_RDONLY)!=-1)
     {
         printf("File already exists.\n");
+        return;
+    }
+    if(arg[2]!=NULL)
+    {
+        printf("Too many arguments.\n");
+        return;
     }
     else
     {
         open(arg[1],O_WRONLY|O_CREAT|O_TRUNC,0666);
     }
 }
+
 
 void argument(char *command, char **arg)
 {
